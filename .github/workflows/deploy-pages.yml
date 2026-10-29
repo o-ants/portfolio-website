@@ -29,6 +29,20 @@ jobs:
         env:
           PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
         run: npm run build -- --base "${PAGES_BASE_PATH}/"
+      - name: Verify production artifact
+        run: |
+          node --input-type=module <<'JS'
+          import { readFileSync, existsSync } from 'node:fs'
+          const html = readFileSync('dist/index.html', 'utf8')
+          if (html.includes('/src/main.tsx')) throw new Error('Unbuilt HTML in dist')
+          const assets = [...html.matchAll(/(?:src|href)="([^"]*\/assets\/[^\"]+)"/g)]
+          if (assets.length < 2) throw new Error('Missing production JS/CSS')
+          for (const [, url] of assets) {
+            if (!existsSync('dist/assets/' + url.split('/assets/')[1])) {
+              throw new Error('Missing asset: ' + url)
+            }
+          }
+          JS
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
