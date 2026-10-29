@@ -26,7 +26,10 @@ and `src/style.css` for styles. Case studies currently use a coming-soon placeho
 
 In the repository's **Settings → Pages**, select **GitHub Actions** as the source.
 The `Deploy portfolio to GitHub Pages` workflow builds and deploys every push to
-`main`; it can also be started manually from the Actions tab. The build uses the
+`testing`; it can also be started manually for `testing` from the Actions tab.
+Deployments from other branches, including `main`, are skipped. Keep site changes
+on `testing` until they are ready to merge into `main`. This branch publishes to
+the existing public Pages URL; it is not a separate private preview. The build uses the
 base path reported by GitHub Pages so assets work under the repository URL.
 
 The default site URL is https://o-ants.github.io/portfolio-website/.
