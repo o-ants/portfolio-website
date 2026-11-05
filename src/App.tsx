@@ -1,3 +1,5 @@
+import SelectedWork from './SelectedWork'
+
 export default function App() {
   return (
     <div className="page">
@@ -14,13 +16,7 @@ export default function App() {
           <a className="button" href="#work">Explore my work <span aria-hidden="true">↓</span></a>
         </section>
 
-        <section className="work" id="work" aria-labelledby="work-title">
-          <div className="section-heading"><h2 id="work-title">Selected work</h2><span>01 — Coming soon</span></div>
-          <div className="placeholder">
-            <span className="asterisk" aria-hidden="true">✳</span>
-            <div><h3>Good things take shape.</h3><p>Case studies are on their way. Stay curious.</p></div>
-          </div>
-        </section>
+        <SelectedWork />
 
         <section className="about" id="about" aria-labelledby="about-title">
           <p className="eyebrow">Behind the work</p>
