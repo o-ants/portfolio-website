@@ -24,13 +24,31 @@ and `src/style.css` for styles. Case studies currently use a coming-soon placeho
 
 ## GitHub Pages
 
-In the repository's **Settings → Pages**, select **GitHub Actions** as the source.
-The `Deploy portfolio to GitHub Pages` workflow builds and deploys every push to
-`testing`; it can also be started manually for `testing` from the Actions tab.
-Deployments from other branches, including `main`, are skipped. Keep site changes
-on `testing` until they are ready to merge into `main`. This branch publishes to
-the existing public Pages URL; it is not a separate private preview. The build uses the
-base path reported by GitHub Pages so assets work under the repository URL.
+Source: **Settings → Pages → GitHub Actions**.
 
-The default site URL is https://o-ants.github.io/portfolio-website/.
-The first deployment must finish successfully before the site is available.
+- `main`: https://o-ants.github.io/portfolio-website/
+- `testing`: https://o-ants.github.io/portfolio-website/testing/
+
+Every push to either branch builds the latest versions of **both** branches and
+publishes one combined Pages artifact. A failed build leaves the published site
+unchanged. Both versions are public. Workflows must stay synchronized on both
+branches. The `github-pages` environment must permit deployments from both
+`main` and `testing`.
+
+Vite receives the correct base path during each build. Use imported assets or
+`import.meta.env.BASE_URL` for public assets; avoid hardcoded root asset paths.
+The `/testing/` path is reserved for the testing site.
+
+## Commands for the assistant
+
+Instructions are stored in `AGENTS.md` and apply to future sessions in this repo.
+
+- «Работаем в testing» — make subsequent changes on `testing`.
+- «Работаем в main» — make subsequent changes on `main`.
+- «Деплой testing» — validate and publish the testing branch.
+- «Деплой main» — validate and publish the main branch.
+- «Перенеси testing в main» — merge testing into main and publish production.
+
+Without an explicit target, use `testing`. Selecting a branch alone does not
+publish changes; an explicit deployment request authorizes pushing that branch.
+Each push rebuilds both sites, but does not merge their source code.

@@ -2,36 +2,80 @@ name: Deploy portfolio to GitHub Pages
 
 on:
   push:
-    branches: [testing]
+    branches: [main, testing]
   workflow_dispatch:
 
 permissions:
   contents: read
 
+# Serialize the complete build and deploy so older builds cannot overwrite newer ones.
 concurrency:
   group: github-pages
   cancel-in-progress: false
 
 jobs:
   build:
-    if: github.ref == 'refs/heads/testing'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/testing'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
+          path: production
+      - uses: actions/checkout@v4
+        with:
+          ref: testing
+          path: preview
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
+          cache-dependency-path: |
+            production/package-lock.json
+            preview/package-lock.json
       - uses: actions/configure-pages@v5
         id: pages
       - run: npm ci
-      - name: Build for the Pages URL
+        working-directory: production
+      - run: npm ci
+        working-directory: preview
+      - name: Build main at the site root
+        working-directory: production
         env:
           PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
         run: npm run build -- --base "${PAGES_BASE_PATH}/"
+      - name: Build testing under /testing/
+        working-directory: preview
+        env:
+          PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+        run: npm run build -- --base "${PAGES_BASE_PATH}/testing/"
+      - name: Assemble both sites
+        run: |
+          mkdir -p site
+          cp -a production/dist/. site/
+          test ! -e site/testing
+          mkdir site/testing
+          cp -a preview/dist/. site/testing/
+          touch site/.nojekyll
+      - name: Verify both production artifacts
+        run: |
+          node --input-type=module <<'JS'
+          import { readFileSync, existsSync } from 'node:fs'
+          for (const dir of ['site', 'site/testing']) {
+            const html = readFileSync(`${dir}/index.html`, 'utf8')
+            if (html.includes('/src/main.tsx')) throw new Error(`Unbuilt HTML in ${dir}`)
+            const assets = [...html.matchAll(/(?:src|href)="([^"]*\/assets\/[^"]+)"/g)]
+            if (assets.length < 2) throw new Error(`Missing JS/CSS in ${dir}`)
+            for (const [, url] of assets) {
+              if (!existsSync(`${dir}/assets/${url.split('/assets/')[1]}`)) {
+                throw new Error(`Missing asset: ${url}`)
+              }
+            }
+          }
+          JS
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: site
 
   deploy:
     needs: build
