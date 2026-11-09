@@ -3,6 +3,7 @@ import SelectedWork from './SelectedWork'
 export default function App() {
   return (
     <div className="page">
+      <div className="page-background" aria-hidden="true" />
       <header className="header">
         <a className="wordmark" href="#home" aria-label="Portfolio home">Portfolio<span>®</span></a>
         <a className="nav-link" href="#about">About me <span aria-hidden="true">↗</span></a>
