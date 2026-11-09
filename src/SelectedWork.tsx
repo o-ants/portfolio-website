@@ -80,7 +80,7 @@ export default function SelectedWork() {
     }
     const gesture = drag.current
     if (gesture?.id !== event.pointerId) return
-    const distance = event.clientX - gesture.x
+    const distance = gesture.x - event.clientX
     if (Math.abs(distance) > 6) {
       navigate(gesture.start + distance / (rect.width * 0.65), 'instant')
     }
@@ -91,7 +91,7 @@ export default function SelectedWork() {
     if (gesture?.id !== event.pointerId) return
     drag.current = null
     setDragging(false)
-    const distance = event.clientX - gesture.x
+    const distance = gesture.x - event.clientX
     const movedVertically = Math.abs(event.clientY - gesture.y) > 12
     const start = Math.round(gesture.start)
     if (event.type === 'pointerup' && Math.abs(distance) >= 36) {
@@ -122,7 +122,7 @@ export default function SelectedWork() {
         </div>
         <div className="shuffle-hint-anchor" aria-hidden="true"><span ref={hint} className="shuffle-hint">листай</span></div>
         <div className="shuffle-controls">
-          <span className="shuffle-instruction">Scroll or drag →</span>
+          <span className="shuffle-instruction">Scroll or drag ←</span>
           <div className="project-navigation" aria-label="Project navigation">
             <button type="button" aria-label="Previous project" disabled={active === 0} onClick={() => navigate(active - 1)}>←</button>
             <div className="project-dots" aria-hidden="true">
