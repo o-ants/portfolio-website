@@ -86,13 +86,12 @@ footer { display: flex; justify-content: space-between; gap: 24px; border-top: 1
   footer { flex-direction: column; gap: 16px; }
 }
 
-/* Selected Work: finite scroll-driven deck; no wheel or touch interception. */
-.shuffle { height: 280svh; }
-.shuffle-sticky { position: sticky; top: 24px; padding-top: 12px; }
-.shuffle-stage { position: relative; isolation: isolate; height: clamp(370px, 65svh, 580px); margin-top: 48px; overflow: clip; overflow-clip-margin: 40px; }
+/* The deck plays in place when it enters the viewport. */
+.shuffle { overflow: clip; }
+.shuffle-stage { position: relative; isolation: isolate; width: min(100%, 470px); height: clamp(430px, 65svh, 580px); margin: 54px auto 0; }
 .project-card {
   position: absolute;
-  inset: 18px 0 0;
+  inset: 0;
   overflow: hidden;
   isolation: isolate;
   color: #171426;
@@ -136,37 +135,27 @@ footer { display: flex; justify-content: space-between; gap: 24px; border-top: 1
 .project-caption h3 { margin: 0 0 8px; font-size: clamp(24px, 3.2vw, 42px); font-weight: 500; letter-spacing: -.045em; line-height: 1.1; }
 .project-caption p { margin: 0; font-size: 14px; line-height: 1.5; }
 .case-status { font-size: 11px; white-space: nowrap; padding-bottom: 3px; }
-.shuffle-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 22px; }
-.scroll-hint { font-size: 12px; color: var(--muted); }
-.scroll-hint > span { margin-left: 10px; }
-.project-navigation { display: flex; align-items: center; gap: 18px; }
+.shuffle-controls { display: flex; justify-content: space-between; align-items: center; gap: 12px; width: min(100%, 470px); margin: 22px auto 0; }
+.shuffle-playback { border: 1px solid var(--divider); border-radius: 20px; padding: 8px 12px; color: var(--foreground); background: transparent; font: inherit; font-size: 12px; cursor: pointer; }
+.project-navigation { display: flex; align-items: center; gap: 12px; }
 .project-navigation button { width: 44px; height: 44px; border: 1px solid var(--divider); border-radius: 50%; color: inherit; background: transparent; font: inherit; cursor: pointer; }
-.project-navigation button:hover:not(:disabled) { background: var(--foreground); color: var(--background); }
-.project-navigation button:disabled { opacity: .3; cursor: default; }
+.project-navigation button:hover, .shuffle-playback:hover { background: var(--foreground); color: var(--background); }
 button:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
-.project-counter { font-size: 12px; font-variant-numeric: tabular-nums; }
-.project-counter > span { color: var(--muted); }
+.project-dots { display: flex; gap: 8px; }
+.project-dots span { width: 7px; height: 7px; border-radius: 50%; background: #ededed50; }
+.project-dots .is-current { background: var(--foreground); }
 @media (max-width: 700px) {
-  .shuffle { height: auto; }
-  .shuffle-sticky { position: static; }
   .shuffle .section-heading { align-items: start; }
   .shuffle .section-heading > span { max-width: 120px; text-align: right; line-height: 1.5; }
-  .shuffle-stage { display: flex; gap: 16px; height: auto; margin: 28px -2% 0; padding: 4px 2% 12px; overflow-x: auto; scroll-snap-type: x mandatory; }
-  .project-card { position: relative; inset: auto; flex: 0 0 94%; min-width: 0; min-height: 470px; padding: 22px; scroll-snap-align: start; }
-  .project-visual { min-height: 230px; flex-direction: column; gap: 16px; text-align: center; padding: 16px; }
+  .project-card { padding: 22px; }
+  .project-visual { flex-direction: column; gap: 16px; text-align: center; padding: 16px; }
   .project-caption { align-items: start; flex-direction: column; gap: 14px; }
   .project-caption h3 { font-size: 28px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .page-background::before,
   .page-background::after { animation: none; }
-  .shuffle { height: auto; }
-  .shuffle-sticky { position: static; }
-  .shuffle-stage { display: grid; gap: 24px; height: auto; overflow: visible; margin-top: 28px; }
-  .project-card { position: relative; inset: auto; min-height: 470px; }
-  .shuffle-controls { display: none; }
-}
-@media (max-width: 700px), (prefers-reduced-motion: reduce) {
-  .project-card { transform: none !important; opacity: 1 !important; filter: none !important; }
-  .project-depth { display: none; }
+  .shuffle-stage { display: grid; gap: 24px; height: auto; margin-top: 28px; }
+  .project-card { position: relative; min-height: 470px; transform: none !important; opacity: 1 !important; filter: none !important; }
+  .project-depth, .shuffle-controls { display: none; }
 }
