@@ -86,9 +86,12 @@ footer { display: flex; justify-content: space-between; gap: 24px; border-top: 1
   footer { flex-direction: column; gap: 16px; }
 }
 
-/* The deck plays in place when it enters the viewport. */
-.shuffle { overflow: clip; }
-.shuffle-stage { position: relative; isolation: isolate; width: min(100%, 470px); height: clamp(430px, 65svh, 580px); margin: 54px auto 0; }
+/* The finite deck uses the same scroll position for wheel, touch and drag. */
+.shuffle { height: 265svh; scroll-margin-top: 24px; }
+.shuffle-sticky { position: sticky; top: 24px; overflow: clip; }
+.shuffle-stage { touch-action: pan-y; }
+.shuffle-stage.is-dragging { user-select: none; }
+.shuffle-stage { position: relative; isolation: isolate; width: min(100%, 470px); height: clamp(260px, calc(100svh - 195px), 580px); margin: 52px auto 0; }
 .project-card {
   position: absolute;
   inset: 0;
@@ -136,10 +139,30 @@ footer { display: flex; justify-content: space-between; gap: 24px; border-top: 1
 .project-caption p { margin: 0; font-size: 14px; line-height: 1.5; }
 .case-status { font-size: 11px; white-space: nowrap; padding-bottom: 3px; }
 .shuffle-controls { display: flex; justify-content: space-between; align-items: center; gap: 12px; width: min(100%, 470px); margin: 22px auto 0; }
-.shuffle-playback { border: 1px solid var(--divider); border-radius: 20px; padding: 8px 12px; color: var(--foreground); background: transparent; font: inherit; font-size: 12px; cursor: pointer; }
+.shuffle-instruction { color: var(--muted); font-size: 12px; }
+.shuffle-hint-anchor { position: absolute; inset: 0; width: min(100%, 470px); margin-inline: auto; pointer-events: none; z-index: 5; }
+.shuffle-hint {
+  display: none;
+  position: absolute;
+  translate: 14px 14px;
+  padding: 8px 13px;
+  border-radius: 99px;
+  background: #ffe27a;
+  color: #171426;
+  font-size: 13px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .project-card:not([aria-hidden]) { cursor: grab; }
+  .shuffle-stage.is-dragging, .shuffle-stage.is-dragging .project-card { cursor: grabbing; }
+  .shuffle-stage:has(.project-card:not([aria-hidden]):hover) + .shuffle-hint-anchor .shuffle-hint,
+  .shuffle-stage.is-dragging + .shuffle-hint-anchor .shuffle-hint { display: block; }
+}
 .project-navigation { display: flex; align-items: center; gap: 12px; }
 .project-navigation button { width: 44px; height: 44px; border: 1px solid var(--divider); border-radius: 50%; color: inherit; background: transparent; font: inherit; cursor: pointer; }
-.project-navigation button:hover, .shuffle-playback:hover { background: var(--foreground); color: var(--background); }
+.project-navigation button:hover:not(:disabled) { background: var(--foreground); color: var(--background); }
+.project-navigation button:disabled { opacity: .35; cursor: default; }
 button:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
 .project-dots { display: flex; gap: 8px; }
 .project-dots span { width: 7px; height: 7px; border-radius: 50%; background: #ededed50; }
@@ -155,7 +178,9 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
 @media (prefers-reduced-motion: reduce) {
   .page-background::before,
   .page-background::after { animation: none; }
+  .shuffle { height: auto; }
+  .shuffle-sticky { position: static; }
   .shuffle-stage { display: grid; gap: 24px; height: auto; margin-top: 28px; }
   .project-card { position: relative; min-height: 470px; transform: none !important; opacity: 1 !important; filter: none !important; }
-  .project-depth, .shuffle-controls { display: none; }
+  .project-depth, .shuffle-controls, .shuffle-hint-anchor { display: none; }
 }
