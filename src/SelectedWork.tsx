@@ -111,7 +111,12 @@ export default function SelectedWork() {
           onPointerDown={pointerDown} onPointerMove={pointerMove}
           onPointerUp={pointerEnd} onPointerCancel={pointerEnd} onLostPointerCapture={pointerEnd}>
           {projects.map((project, index) => (
-              <article className={`project-card ${project.color}`} key={project.title} aria-hidden={!reduced && index !== active ? true : undefined}>
+              <article
+                className={`project-card ${project.color}`}
+                key={project.title}
+                style={reduced ? undefined : { zIndex: projects.length - index }}
+                aria-hidden={!reduced && index !== active ? true : undefined}
+              >
                 <div className="project-decoration" aria-hidden="true" />
                 <div className="project-top"><span className="project-number">{project.number}</span><span>{project.category}</span></div>
                 <div className="project-visual"><span className="visual-frame" aria-hidden="true">{project.number}</span><div><strong>Project image placeholder</strong><span>{project.format} · Real screenshots coming soon</span></div></div>
