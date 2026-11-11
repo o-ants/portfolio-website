@@ -17,3 +17,11 @@
 @media(max-width:760px){.sphere-section{height:160svh;padding-top:40px}.sphere-section .selected-sticky{position:sticky;top:20px}.sphere-stage{height:53svh;min-height:290px;margin-top:15px}.sphere-project-info h3{font-size:17px;margin-left:8px}.sphere-project-info p{font-size:10px;max-width:210px}.sphere-preview{font-size:10px;gap:10px}.sphere-section .gallery-bottom{align-items:start;gap:10px}.sphere-section .gallery-bottom>span{max-width:145px;line-height:1.7}.sphere-section .gallery-controls{gap:12px}.sphere-section .gallery-controls button{height:38px;width:38px}.sphere-section .gallery-controls .sphere-reset{width:auto;padding:0 10px}.sphere-reduced{height:auto}.sphere-reduced .selected-sticky{position:static}}
 @media(max-height:750px) and (min-width:761px){.sphere-stage{height:55svh;min-height:280px}.sphere-section .selected-sticky{top:20px}.sphere-project-info{padding-top:10px}.sphere-section .gallery-bottom{margin-top:8px}}
 @media(prefers-reduced-motion:reduce){.sphere-section{height:auto}.sphere-section .selected-sticky{position:static}}
+
+/* Give each project its own readable scroll interval before releasing the section. */
+.sphere-section{height:340svh}.sphere-reduced{height:auto}
+@media(max-width:760px){.sphere-section{height:320svh}.sphere-reduced{height:auto}}
+@media(prefers-reduced-motion:reduce){.sphere-section{height:auto}}
+
+/* Draw tile contents at double resolution so enlarged placeholders stay crisp. */
+.sphere-tile{width:344px;height:248px;left:-172px;top:-124px}.sphere-tile-content{border-radius:10px}.sphere-tile-number{top:18px;left:20px;font-size:16px}.sphere-tile-label{left:20px;right:20px;bottom:42px;font-size:18px}.sphere-tile-content small{bottom:16px;left:20px;font-size:10px}.sphere-cross{width:40px;height:40px}.sphere-cross:before,.sphere-cross:after{width:32px;height:2px}
