@@ -1,32 +1,5 @@
-import SelectedWork from './SelectedWork'
+import SphereGallery from './prototype/SphereGallery'
 
 export default function App() {
-  return (
-    <div className="page">
-      <div className="page-background" aria-hidden="true" />
-      <header className="header">
-        <a className="wordmark" href="#home" aria-label="Portfolio home">Portfolio<span>®</span></a>
-        <a className="nav-link" href="#about">About me <span aria-hidden="true">↗</span></a>
-      </header>
-
-      <main id="home">
-        <section className="hero" aria-labelledby="intro">
-          <p className="eyebrow"><span className="dot" /> Product designer</p>
-          <h1 id="intro">Turning complex ideas into <em>simple experiences.</em></h1>
-          <p className="intro">I design thoughtful digital products that connect people and ideas. A little curiosity, a lot of care, and a focus on what matters.</p>
-          <a className="button" href="#work">Explore my work <span aria-hidden="true">↓</span></a>
-        </section>
-
-        <SelectedWork />
-
-        <section className="about" id="about" aria-labelledby="about-title">
-          <p className="eyebrow">Behind the work</p>
-          <h2 id="about-title">Curious by nature.<br />Intentional by design.</h2>
-          <p>I’m a product designer interested in making everyday interactions clearer, friendlier, and more useful. This is a space for my work and the thinking behind it.</p>
-        </section>
-      </main>
-
-      <footer><span>Product design & thoughtful details.</span><a href="#home">Back to top ↑</a></footer>
-    </div>
-  )
+  return <SphereGallery />
 }
