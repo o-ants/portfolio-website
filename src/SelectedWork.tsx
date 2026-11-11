@@ -83,9 +83,9 @@ export default function SelectedWork({ language, onOpen }: { language: Language;
       current.zoom = mix(current.zoom, targetZoom, .1)
       current.selected = mix(current.selected, selected === null ? 0 : 1, .13)
       const fit = Math.min(rect.width / 1000, rect.height / 900)
-      const cardWidth = Math.min(380, Math.max(230, rect.width * .28))
+      const cardWidth = Math.min(330, Math.max(220, rect.width * .23))
       const rowScale = cardWidth / 172 / fit / targetZoom
-      const spacing = (cardWidth + 22) / fit / targetZoom
+      const spacing = (cardWidth + 28) / fit / targetZoom
       const arcRadius = Math.max(1100, rect.width / fit / targetZoom * .8)
       const expandedRadius = 355 * (1 + expansion * .32)
       world.current.style.transform = `scale(${fit * current.zoom})`
@@ -106,9 +106,10 @@ export default function SelectedWork({ language, onOpen }: { language: Language;
         const angle = Math.max(-1.3, Math.min(1.3, (index - 1 - travel) * spacing / arcRadius))
         const rowX = arcRadius * Math.sin(angle)
         const rowZ = arcRadius * (1 - Math.cos(angle)) - 70
+        const rowY = -Math.pow(Math.sin(angle), 2) * 95
         const rowYaw = -angle * 180 / Math.PI
         const px = main ? mix(x * expandedRadius, rowX, unfold) : x * expandedRadius * (1 + unfold)
-        const py = main ? mix(y * expandedRadius, 0, unfold) : y * expandedRadius * (1 + unfold)
+        const py = main ? mix(y * expandedRadius, rowY, unfold) : y * expandedRadius * (1 + unfold)
         const pz = main ? mix(z * expandedRadius, rowZ, unfold) : z * expandedRadius
         tile.style.transform = `translate3d(${mix(px, 0, focus)}px,${mix(py, 0, focus)}px,${mix(pz, 460, focus)}px) rotateY(${mix(mix(Math.atan2(x,z) * 180 / Math.PI, main ? rowYaw : 0, unfold), 0, focus)}deg) rotateX(${mix(-Math.asin(Math.max(-1, Math.min(1,y))) * 180 / Math.PI * (1 - unfold), 0, focus)}deg) scale(${mix(main ? mix(point.cardScale, rowScale, unfold) : point.cardScale, 2.5, focus) * .5})`
         tile.style.visibility = !main && unfold > .995 ? 'hidden' : 'visible'
