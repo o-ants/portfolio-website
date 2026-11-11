@@ -10,7 +10,7 @@ const projectIndex = (tile: number) => ((tile - 1) % count + count) % count
 const globeCardScale = .88
 // Latitude rings retain the regular landscape-card rhythm of the reference.
 function createGlobe() {
-  return [-72, -48, -24, 0, 24, 48, 72].flatMap((latitude, row) => {
+  const rings = [-72, -48, -24, 0, 24, 48, 72].flatMap((latitude, row) => {
     const pitch = latitude * Math.PI / 180
     const count = Math.max(4, Math.round(12 * Math.cos(pitch)))
     // A tangent rectangle extends inward at its polar edge: reserve that space too.
@@ -21,6 +21,11 @@ function createGlobe() {
       return { cardScale, x: Math.sin(yaw) * Math.cos(pitch), y: Math.sin(pitch), z: Math.cos(yaw) * Math.cos(pitch), yaw: yaw * 180 / Math.PI, pitch: -latitude }
     })
   })
+  // The persistent gallery comes from the equator, never the polar rows.
+  const equator = rings.filter(point => point.pitch === 0)
+  const gallery = [equator[equator.length - 1], ...equator.slice(0, count + 1)]
+  const chosen = new Set(gallery)
+  return [...gallery, ...rings.filter(point => !chosen.has(point))]
 }
 export default function SelectedWork({ language, onOpen }: { language: Language; onOpen: (index: number) => void }) {
   const text = copy[language]
@@ -51,7 +56,8 @@ export default function SelectedWork({ language, onOpen }: { language: Language;
       if (!el) return
       const progress = Math.max(0, Math.min(1, (35 - el.getBoundingClientRect().top) / Math.max(1, el.offsetHeight - innerHeight)))
       scrollFraction.current = progress
-      setActive(Math.min(count - 1, Math.max(0, Math.round((progress - .35) / .65 * (count - 1)))))
+      setSelected(null)
+      setActive(Math.min(count - 1, Math.max(0, Math.round((progress - .42) / .58 * (count - 1)))))
       scheduleRef.current()
     }
     advance()
@@ -67,9 +73,10 @@ export default function SelectedWork({ language, onOpen }: { language: Language;
       if (!stage.current || !world.current || !section.current) return
       const rect = stage.current.getBoundingClientRect()
       const scrollProgress = Math.max(0, Math.min(1, (35 - section.current.getBoundingClientRect().top) / Math.max(1, section.current.offsetHeight - innerHeight)))
-      const unfold = smooth((scrollProgress - .06) / .32)
-      const travel = Math.max(0, Math.min(1, (scrollProgress - .38) / .62)) * (count - 1)
-      const targetZoom = selected === null ? 1 : 1.25
+      const expansion = smooth(scrollProgress / .30)
+      const unfold = smooth((scrollProgress - .10) / .32)
+      const travel = Math.max(0, Math.min(1, (scrollProgress - .42) / .58)) * (count - 1)
+      const targetZoom = selected === null ? 1 + expansion * .18 : 1.25
       const current = pose.current
       current.x = mix(current.x, rotation.current.x, .1)
       current.y = mix(current.y, rotation.current.y + scrollProgress * 24, .1)
@@ -77,8 +84,10 @@ export default function SelectedWork({ language, onOpen }: { language: Language;
       current.selected = mix(current.selected, selected === null ? 0 : 1, .13)
       const fit = Math.min(rect.width / 1000, rect.height / 900)
       const cardWidth = Math.min(380, Math.max(230, rect.width * .28))
-      const rowScale = cardWidth / 172 / fit
-      const spacing = (cardWidth + 22) / fit
+      const rowScale = cardWidth / 172 / fit / targetZoom
+      const spacing = (cardWidth + 22) / fit / targetZoom
+      const arcRadius = Math.max(1100, rect.width / fit / targetZoom * .8)
+      const expandedRadius = 355 * (1 + expansion * .32)
       world.current.style.transform = `scale(${fit * current.zoom})`
       const ry = current.y * Math.PI / 180, rx = current.x * Math.PI / 180
       let tilesMoving = false
@@ -94,11 +103,14 @@ export default function SelectedWork({ language, onOpen }: { language: Language;
         focusAmounts.current[index] = focus
         if (Math.abs(focus - focusTarget) > .001) tilesMoving = true
         const main = index < count + 2
-        const rowX = (index - 1 - travel) * spacing
-        const px = main ? mix(x * 355, rowX, unfold) : x * 355 * (1 + unfold)
-        const py = main ? mix(y * 355, 0, unfold) : y * 355 * (1 + unfold)
-        const pz = main ? mix(z * 355, 0, unfold) : z * 355
-        tile.style.transform = `translate3d(${mix(px, 0, focus)}px,${mix(py, 0, focus)}px,${mix(pz, 460, focus)}px) rotateY(${mix(Math.atan2(x,z) * 180 / Math.PI * (1 - unfold), 0, focus)}deg) rotateX(${mix(-Math.asin(Math.max(-1, Math.min(1,y))) * 180 / Math.PI * (1 - unfold), 0, focus)}deg) scale(${mix(main ? mix(point.cardScale, rowScale, unfold) : point.cardScale, 2.5, focus) * .5})`
+        const angle = Math.max(-1.3, Math.min(1.3, (index - 1 - travel) * spacing / arcRadius))
+        const rowX = arcRadius * Math.sin(angle)
+        const rowZ = arcRadius * (1 - Math.cos(angle)) - 70
+        const rowYaw = -angle * 180 / Math.PI
+        const px = main ? mix(x * expandedRadius, rowX, unfold) : x * expandedRadius * (1 + unfold)
+        const py = main ? mix(y * expandedRadius, 0, unfold) : y * expandedRadius * (1 + unfold)
+        const pz = main ? mix(z * expandedRadius, rowZ, unfold) : z * expandedRadius
+        tile.style.transform = `translate3d(${mix(px, 0, focus)}px,${mix(py, 0, focus)}px,${mix(pz, 460, focus)}px) rotateY(${mix(mix(Math.atan2(x,z) * 180 / Math.PI, main ? rowYaw : 0, unfold), 0, focus)}deg) rotateX(${mix(-Math.asin(Math.max(-1, Math.min(1,y))) * 180 / Math.PI * (1 - unfold), 0, focus)}deg) scale(${mix(main ? mix(point.cardScale, rowScale, unfold) : point.cardScale, 2.5, focus) * .5})`
         tile.style.visibility = !main && unfold > .995 ? 'hidden' : 'visible'
         tile.style.opacity = String(selected === index ? 1 : (main ? mix(z < -.08 ? .22 : .78 + z * .22, 1, unfold) : (z < -.08 ? .22 : .78 + z * .22) * (1 - unfold)) * (1 - current.selected * .28))
         tile.style.pointerEvents = (unfold > .8 ? main : z > .05) || selected === index ? 'auto' : 'none'
@@ -121,7 +133,7 @@ export default function SelectedWork({ language, onOpen }: { language: Language;
   const navigate = (index: number) => {
     const target = Math.max(0, Math.min(count - 1, index))
     setSelected(null)
-    scrollToPhase(.38 + target / (count - 1) * .62)
+    scrollToPhase(.42 + target / (count - 1) * .58)
   }
   const pointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (reduced || !event.isPrimary || event.button !== 0) return
@@ -135,9 +147,9 @@ export default function SelectedWork({ language, onOpen }: { language: Language;
     if (Math.abs(dx) > 7) {
       gesture.moved = true
       if (selected !== null) setSelected(null)
-      if (gesture.startProgress > .38) {
+      if (gesture.startProgress > .42) {
         const el = section.current!
-        const progress = Math.max(.38, Math.min(1, gesture.startProgress - dx / stage.current!.clientWidth * .35))
+        const progress = Math.max(.42, Math.min(1, gesture.startProgress - dx / stage.current!.clientWidth * .35))
         scrollTo({ top: scrollY + el.getBoundingClientRect().top - 35 + (el.offsetHeight - innerHeight) * progress, behavior: 'instant' })
         return
       }
