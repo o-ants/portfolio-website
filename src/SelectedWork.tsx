@@ -55,7 +55,7 @@ export default function SelectedWork({ language, onOpen }: { language: Language;
           return <article key={project.title} className={`featured-card ${project.theme}`} style={style}>
             <div className="featured-meta"><span>0{index + 1}</span><span>{project.type}</span></div>
             <div className="featured-placeholder"><span className="project-mark" aria-hidden="true">{project.mark}</span><span className="placeholder-label">{text.image}</span></div>
-            <div className="featured-caption"><div><h3>{project.title}</h3><p>{project[language]}</p></div><button onClick={() => onOpen(index)} aria-label={`${text.preview}: ${project.title}`} className="round-link">↗</button></div>
+            <div className="featured-caption"><div><h3>{project.title}</h3><p>{project[language]}</p></div><button onClick={() => onOpen(index)} aria-label={`${text.preview}: ${project.title}`} className="round-link"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" /></svg></button></div>
             <span className="case-status">{text.soon}</span>
           </article>
         })}
