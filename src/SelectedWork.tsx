@@ -6,14 +6,19 @@ const galleryProjects = [...projects, ...otherProjects.map(project => ({ ...proj
 const count = galleryProjects.length
 const projectIndex = (tile: number) => ((tile - 1) % count + count) % count
 
+// Leave a consistent gutter between tangent cards, including the polar rings.
+const globeCardScale = .88
 // Latitude rings retain the regular landscape-card rhythm of the reference.
 function createGlobe() {
   return [-72, -48, -24, 0, 24, 48, 72].flatMap((latitude, row) => {
     const pitch = latitude * Math.PI / 180
-    const count = Math.max(4, Math.round(13 * Math.cos(pitch)))
+    const count = Math.max(4, Math.round(12 * Math.cos(pitch)))
+    // A tangent rectangle extends inward at its polar edge: reserve that space too.
+    const safeScale = 2 * 355 * Math.cos(pitch) * Math.tan(Math.PI / count) / (172 + 124 * Math.abs(Math.sin(pitch)) * Math.tan(Math.PI / count))
+    const cardScale = Math.min(globeCardScale, safeScale * .9)
     return Array.from({ length: count }, (_, column) => {
-      const yaw = column / count * Math.PI * 2 + (row % 2) * .13
-      return { x: Math.sin(yaw) * Math.cos(pitch), y: Math.sin(pitch), z: Math.cos(yaw) * Math.cos(pitch), yaw: yaw * 180 / Math.PI, pitch: -latitude }
+      const yaw = (column + (row % 2) * .5) / count * Math.PI * 2
+      return { cardScale, x: Math.sin(yaw) * Math.cos(pitch), y: Math.sin(pitch), z: Math.cos(yaw) * Math.cos(pitch), yaw: yaw * 180 / Math.PI, pitch: -latitude }
     })
   })
 }
@@ -93,7 +98,7 @@ export default function SelectedWork({ language, onOpen }: { language: Language;
         const px = main ? mix(x * 355, rowX, unfold) : x * 355 * (1 + unfold)
         const py = main ? mix(y * 355, 0, unfold) : y * 355 * (1 + unfold)
         const pz = main ? mix(z * 355, 0, unfold) : z * 355
-        tile.style.transform = `translate3d(${mix(px, 0, focus)}px,${mix(py, 0, focus)}px,${mix(pz, 460, focus)}px) rotateY(${mix(Math.atan2(x,z) * 180 / Math.PI * (1 - unfold), 0, focus)}deg) rotateX(${mix(-Math.asin(Math.max(-1, Math.min(1,y))) * 180 / Math.PI * (1 - unfold), 0, focus)}deg) scale(${mix(main ? mix(1, rowScale, unfold) : 1, 2.5, focus) * .5})`
+        tile.style.transform = `translate3d(${mix(px, 0, focus)}px,${mix(py, 0, focus)}px,${mix(pz, 460, focus)}px) rotateY(${mix(Math.atan2(x,z) * 180 / Math.PI * (1 - unfold), 0, focus)}deg) rotateX(${mix(-Math.asin(Math.max(-1, Math.min(1,y))) * 180 / Math.PI * (1 - unfold), 0, focus)}deg) scale(${mix(main ? mix(point.cardScale, rowScale, unfold) : point.cardScale, 2.5, focus) * .5})`
         tile.style.visibility = !main && unfold > .995 ? 'hidden' : 'visible'
         tile.style.opacity = String(selected === index ? 1 : (main ? mix(z < -.08 ? .22 : .78 + z * .22, 1, unfold) : (z < -.08 ? .22 : .78 + z * .22) * (1 - unfold)) * (1 - current.selected * .28))
         tile.style.pointerEvents = (unfold > .8 ? main : z > .05) || selected === index ? 'auto' : 'none'
