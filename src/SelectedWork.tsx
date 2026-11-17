@@ -26,18 +26,25 @@ export default function SelectedWork({ language, onOpen }: Props) {
 
       const distance = Math.max(1, deck.offsetHeight - viewport.offsetHeight)
       const progress = Math.min(1, Math.max(0, -deck.getBoundingClientRect().top / distance))
-      const position = progress * (cards.length - 1)
-      const spacing = viewport.offsetHeight * 0.15
+      const travel = progress * cards.length
+      const opening = Math.min(1, travel)
+      const position = Math.max(0, travel - 1)
+      const spacing = viewport.offsetHeight * 0.115
 
       cards.forEach((card, index) => {
         const offset = index - position
         const depth = Math.abs(offset)
-        const tilt = Math.max(-1, Math.min(1, offset)) * 67
-        const y = offset * spacing + Math.max(-1, Math.min(1, offset)) * spacing * 0.9
-        const scale = 1 - Math.min(depth, 5) * 0.055
+        const proximity = Math.max(0, 1 - depth)
+        const overviewY = (index - (cards.length - 1) / 2) * spacing
+        const expandedY = offset * spacing + Math.max(-1, Math.min(1, offset)) * spacing * 1.25
+        const y = overviewY + (expandedY - overviewY) * opening
+        const tilt = 58 * (1 - opening * proximity)
+        const overviewScale = 0.69 + index * 0.049
+        const expandedScale = 1 - Math.min(depth, 5) * 0.095
+        const scale = overviewScale + (expandedScale - overviewScale) * opening
 
-        card.style.transform = `translateY(${y}px) perspective(850px) rotateX(${tilt}deg) scale(${scale})`
-        card.style.zIndex = String(100 - Math.round(depth * 10))
+        card.style.transform = `translateY(${y}px) scale(${scale}) perspective(1500px) rotateX(${tilt}deg)`
+        card.style.zIndex = String(index + Math.round(opening * proximity * 20))
       })
     }
 
@@ -63,7 +70,7 @@ export default function SelectedWork({ language, onOpen }: Props) {
     const viewport = stage.current!
     const start = deck.getBoundingClientRect().top + window.scrollY
     const distance = deck.offsetHeight - viewport.offsetHeight
-    window.scrollTo({ top: start + distance * index / (selectedProjects.length - 1), behavior: 'instant' })
+    window.scrollTo({ top: start + distance * (index + 1) / selectedProjects.length, behavior: 'instant' })
   }
 
   return (
