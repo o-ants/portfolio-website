@@ -33,6 +33,7 @@
   display: grid;
   justify-items: center;
   align-items: end;
+  overflow-x: clip;
   min-height: min(104cqw, 630px, 82svh);
   margin: 0;
   padding: 0 0 clamp(20px, 7vw, 82px);
