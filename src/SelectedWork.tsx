@@ -31,16 +31,14 @@ export default function SelectedWork({ language, onOpen }: Props) {
           onPointerLeave={() => setHovered(null)}
         >
           {selectedProjects.map((project, index) => {
-            const offset = index - (active ?? (selectedProjects.length - 1) / 2)
-            const depth = Math.abs(offset)
-            const isOpen = active === index
-            const y = offset * 11.5 + (active === null ? 0 : Math.sign(offset) * 12)
-            const scale = active === null ? 0.69 + index * 0.049 : 1 - depth * 0.095
+            const depth = selectedProjects.length - 1 - index
+            const isSelected = active === index
+            const isInFront = active !== null && index > active
             const style = {
-              '--card-y': `${y}cqh`,
-              '--card-scale': scale,
-              '--card-tilt': isOpen ? '0deg' : '58deg',
-              zIndex: isOpen ? selectedProjects.length : index,
+              '--card-lift': depth * -0.092,
+              '--card-scale': 1 - depth * 0.055,
+              '--card-tilt': isInFront ? '-80deg' : isSelected ? '-37deg' : '-9deg',
+              zIndex: index,
             } as CSSProperties
 
             return (

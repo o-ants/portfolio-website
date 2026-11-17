@@ -24,27 +24,28 @@
 }
 
 .project-stack-track {
-  --stage-height: min(88svh, 820px);
+  --card-width: min(94cqw, 570px, 74svh);
   margin-top: 26px;
 }
 
 .project-stack {
-  container-type: size;
+  container-type: inline-size;
   display: grid;
-  place-items: center;
-  height: var(--stage-height);
+  justify-items: center;
+  align-items: end;
+  min-height: min(104cqw, 630px, 82svh);
   margin: 0;
-  padding: 0;
-  overflow: clip;
+  padding: 0 0 clamp(20px, 7vw, 82px);
   list-style: none;
 }
 
 .project-stack li {
   --card-tone: #e1e1e1;
   grid-area: 1 / 1;
-  width: min(100%, 64rem, calc(var(--stage-height) * .98));
-  aspect-ratio: 16 / 10;
-  transform: translateY(var(--card-y)) scale(var(--card-scale)) perspective(1500px) rotateX(var(--card-tilt));
+  width: var(--card-width);
+  aspect-ratio: 7 / 5;
+  transform-origin: center bottom;
+  transform: translateY(calc(var(--card-width) * var(--card-lift))) scale(var(--card-scale)) perspective(1250px) rotateX(var(--card-tilt));
   transition: transform 420ms cubic-bezier(.2, .75, .25, 1);
 }
 
@@ -106,8 +107,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .project-stack {
-    container-type: normal;
-    height: auto;
+    min-height: 0;
     gap: 16px;
     overflow: visible;
   }
