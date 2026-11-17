@@ -25,13 +25,11 @@
 
 .project-stack-track {
   --stage-height: min(88svh, 820px);
-  height: calc(var(--stage-height) + 165svh);
   margin-top: 26px;
 }
 
 .project-stack {
-  position: sticky;
-  top: 0;
+  container-type: size;
   display: grid;
   place-items: center;
   height: var(--stage-height);
@@ -46,6 +44,8 @@
   grid-area: 1 / 1;
   width: min(100%, 64rem, calc(var(--stage-height) * .98));
   aspect-ratio: 16 / 10;
+  transform: translateY(var(--card-y)) scale(var(--card-scale)) perspective(1500px) rotateX(var(--card-tilt));
+  transition: transform 420ms cubic-bezier(.2, .75, .25, 1);
 }
 
 .project-stack li:nth-child(2) { --card-tone: #c6c6c6; }
@@ -105,9 +105,8 @@
 .project-stack-placeholder > span { font-size: 30px; font-weight: 300; }
 
 @media (prefers-reduced-motion: reduce) {
-  .project-stack-track { height: auto; }
   .project-stack {
-    position: static;
+    container-type: normal;
     height: auto;
     gap: 16px;
     overflow: visible;
