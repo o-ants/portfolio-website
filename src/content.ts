@@ -1,3 +1,5 @@
+import bankingRegulationsCover from './assets/banking-regulations.webp'
+
 export type Language = 'en' | 'ru'
 export const copy = {
   en: {
@@ -23,3 +25,11 @@ export const otherProjects = [
   { title: 'CMS 2.0', group: 'Content management', theme: 'sand', mark: '2.0' },
   { title: 'Food.ru chatbot', group: 'Food.ru', theme: 'blue', mark: '…' },
 ]
+
+export const bankingRegulations = {
+  title: 'Banking Regulations',
+  theme: 'sage',
+  image: bankingRegulationsCover,
+}
+
+export const allProjects = [...projects, ...otherProjects, bankingRegulations]

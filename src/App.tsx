@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import SelectedWork from './SelectedWork'
 import OtherProjects from './OtherProjects'
-import { copy, projects, otherProjects, type Language } from './content'
+import { allProjects, copy, type Language } from './content'
 import './style.css'
 
 export default function App() {
@@ -28,7 +28,7 @@ export default function App() {
     return () => { cancelAnimationFrame(frame); removeEventListener('scroll', schedule); media.removeEventListener('change', update) }
   }, [])
   const openProject = (index: number) => { setOpened(index); dialog.current?.showModal() }
-  const project = opened === null ? null : opened < 3 ? projects[opened] : otherProjects[opened - 3]
+  const project = opened === null ? null : allProjects[opened]
   return <>
     <div className="ambient-background" aria-hidden="true" />
     <a className="skip-link" href="#main">{language === 'en' ? 'Skip to content' : 'К содержимому'}</a>
@@ -42,6 +42,6 @@ export default function App() {
         <section className="contact-section reveal" id="contact" aria-labelledby="contact-title"><div><span className="section-index">04 / {text.nav[2]}</span><h2 id="contact-title">{text.contact}</h2><p>{text.contactText}</p></div><div className="contact-links"><a href="mailto:o.antsinova@gmail.com">o.antsinova@gmail.com <span><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" /></svg></span></a><a href="https://t.me/olgamaio" target="_blank" rel="noopener noreferrer">Telegram <span><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" /></svg></span></a><span className="inactive-contact">LinkedIn <small>{text.linked}</small></span></div></section>
       </main><footer><span>© {new Date().getFullYear()} {text.name}</span><span>{text.role}</span><a href="#home">{text.back} ↑</a></footer>
     </div>
-    <dialog ref={dialog} className="project-dialog" onClose={() => setOpened(null)} onClick={event => { if (event.target === dialog.current) { const box = dialog.current.getBoundingClientRect(); if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) dialog.current.close() } }}><div className="dialog-top"><span>{text.details}</span><button onClick={() => dialog.current?.close()} aria-label={text.close}>×</button></div>{project && <><h2>{project.title}</h2><div className={`dialog-visual ${project.theme}`}><span>{'mark' in project ? project.mark : ''}</span><small>{text.image}</small></div><p>{text.placeholder}</p><span className="case-status">{text.soon}</span></>}</dialog>
+    <dialog ref={dialog} className="project-dialog" onClose={() => setOpened(null)} onClick={event => { if (event.target === dialog.current) { const box = dialog.current.getBoundingClientRect(); if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) dialog.current.close() } }}><div className="dialog-top"><span>{text.details}</span><button onClick={() => dialog.current?.close()} aria-label={text.close}>×</button></div>{project && <><h2>{project.title}</h2>{'image' in project ? <img className="project-dialog-image" src={project.image} alt={language === 'en' ? 'Sber Bank banking regulations dashboard' : 'Дашборд банковских нормативов Сбера'} width="1920" height="1200" /> : <><div className={`dialog-visual ${project.theme}`}><span>{'mark' in project ? project.mark : ''}</span><small>{text.image}</small></div><p>{text.placeholder}</p></>}<span className="case-status">{text.soon}</span></>}</dialog>
   </>
 }

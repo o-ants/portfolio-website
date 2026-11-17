@@ -1,7 +1,7 @@
 import { useState, type CSSProperties } from 'react'
-import { copy, otherProjects, projects, type Language } from './content'
+import { allProjects, bankingRegulations, copy, otherProjects, projects, type Language } from './content'
 
-const selectedProjects = [...projects, ...otherProjects.slice(0, 3)]
+const selectedProjects = [...projects, ...otherProjects.slice(0, 3), bankingRegulations]
 
 type Props = {
   language: Language
@@ -50,7 +50,7 @@ export default function SelectedWork({ language, onOpen }: Props) {
                     if (event.currentTarget.matches(':focus-visible')) setFocused(index)
                   }}
                   onBlur={() => setFocused(null)}
-                  onClick={() => onOpen(index)}
+                  onClick={() => onOpen(allProjects.indexOf(project))}
                   aria-label={`${text.preview}: ${project.title}`}
                 >
                   <span className="project-stack-preview">
@@ -61,10 +61,14 @@ export default function SelectedWork({ language, onOpen }: Props) {
                         <path d="M5 19 19 5M5 5h14v14" />
                       </svg>
                     </span>
-                    <span className="project-stack-placeholder" aria-hidden="true">
-                      <span>+</span>
-                      <small>{text.image}</small>
-                    </span>
+                    {'image' in project ? (
+                      <img className="project-stack-image" src={project.image} alt="" width="1920" height="1200" />
+                    ) : (
+                      <span className="project-stack-placeholder" aria-hidden="true">
+                        <span>+</span>
+                        <small>{text.image}</small>
+                      </span>
+                    )}
                   </span>
                 </button>
               </li>
