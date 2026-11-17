@@ -32,6 +32,7 @@ export default function SelectedWork({ language, onOpen }: Props) {
         >
           {selectedProjects.map((project, index) => {
             const depth = selectedProjects.length - 1 - index
+            const hasImage = 'image' in project
             const isSelected = active === index
             const isInFront = active !== null && index > active
             const style = {
@@ -45,7 +46,7 @@ export default function SelectedWork({ language, onOpen }: Props) {
               <li key={project.title} data-project-index={index} style={style}>
                 <button
                   type="button"
-                  className="project-stack-card"
+                  className={hasImage ? 'project-stack-card has-image' : 'project-stack-card'}
                   onFocus={event => {
                     if (event.currentTarget.matches(':focus-visible')) setFocused(index)
                   }}
@@ -61,7 +62,7 @@ export default function SelectedWork({ language, onOpen }: Props) {
                         <path d="M5 19 19 5M5 5h14v14" />
                       </svg>
                     </span>
-                    {'image' in project ? (
+                    {hasImage ? (
                       <img className="project-stack-image" src={project.image} alt="" width="1920" height="1200" />
                     ) : (
                       <span className="project-stack-placeholder" aria-hidden="true">

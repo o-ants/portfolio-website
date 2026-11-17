@@ -24,8 +24,10 @@
 }
 
 .project-stack-track {
-  --card-width: min(94cqw, 570px, 74svh);
+  --card-width: 100cqw;
+  --card-height: min(62.5cqw, 74svh);
   margin-top: 26px;
+  margin-inline: calc(50% - 50vw);
 }
 
 .project-stack {
@@ -34,7 +36,7 @@
   justify-items: center;
   align-items: end;
   overflow-x: clip;
-  min-height: calc(1.05 * var(--card-width) + clamp(20px, 7vw, 82px));
+  min-height: calc(1.55 * var(--card-height) + clamp(20px, 7vw, 82px));
   margin: 0;
   padding: 0 0 clamp(20px, 7vw, 82px);
   list-style: none;
@@ -44,9 +46,9 @@
   --card-tone: #e1e1e1;
   grid-area: 1 / 1;
   width: var(--card-width);
-  aspect-ratio: 7 / 5;
+  height: var(--card-height);
   transform-origin: center bottom;
-  transform: translateY(calc(var(--card-width) * var(--card-lift))) scale(var(--card-scale)) perspective(1250px) rotateX(var(--card-tilt));
+  transform: translateY(calc(var(--card-height) * 1.4 * var(--card-lift))) scale(var(--card-scale)) perspective(1250px) rotateX(var(--card-tilt));
   transition: transform 420ms cubic-bezier(.2, .75, .25, 1);
 }
 
@@ -119,13 +121,31 @@
   }
 }
 
+.project-stack-card.has-image {
+  position: relative;
+}
+
 .project-stack-image {
-  display: block;
-  flex: 1;
-  min-height: 0;
+  position: absolute;
+  inset: 0;
   width: 100%;
-  object-fit: contain;
-  background: #f2f2f4;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.project-stack-card.has-image .project-stack-title {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  align-content: end;
+  background: linear-gradient(transparent 72%, #f2f2f4f5);
+}
+
+.project-stack-card.has-image .project-stack-title svg {
+  position: absolute;
+  right: clamp(27px, 5vw, 48px);
+  top: clamp(22px, 4vw, 38px);
 }
 
 .project-dialog-image {
