@@ -34,13 +34,11 @@ export default function SelectedWork({ language, onOpen }: Props) {
             const depth = selectedProjects.length - 1 - index
             const isSelected = active === index
             const isInFront = active !== null && index > active
-            const isBehind = active !== null && index < active
             const style = {
-              '--card-lift': depth * -0.076 - (isSelected ? 0.14 : isBehind ? 0.22 : 0),
-              '--card-scale': 1 - depth * 0.055 + (isSelected ? 0.045 : 0),
-              '--card-tilt': isInFront ? '-69deg' : isSelected ? '-4deg' : isBehind ? '43deg' : '-9deg',
-              '--card-height': depth === 0 && !isSelected ? 'var(--front-height)' : 'var(--full-height)',
-              zIndex: isSelected ? selectedProjects.length : index,
+              '--card-lift': depth * -0.092,
+              '--card-scale': 1 - depth * 0.055,
+              '--card-tilt': isInFront ? '-80deg' : isSelected ? '-37deg' : '-9deg',
+              zIndex: index,
             } as CSSProperties
 
             return (

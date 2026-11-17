@@ -24,9 +24,7 @@
 }
 
 .project-stack-track {
-  --card-width: 94cqw;
-  --full-height: clamp(180px, 49svh, 510px);
-  --front-height: calc(var(--full-height) / 2);
+  --card-width: min(94cqw, 570px, 74svh);
   margin-top: 26px;
 }
 
@@ -36,7 +34,7 @@
   justify-items: center;
   align-items: end;
   overflow-x: clip;
-  min-height: calc(var(--full-height) + 0.63 * var(--card-width));
+  min-height: min(104cqw, 630px, 82svh);
   margin: 0;
   padding: 0 0 clamp(20px, 7vw, 82px);
   list-style: none;
@@ -46,10 +44,10 @@
   --card-tone: #e1e1e1;
   grid-area: 1 / 1;
   width: var(--card-width);
-  height: var(--card-height);
+  aspect-ratio: 7 / 5;
   transform-origin: center bottom;
   transform: translateY(calc(var(--card-width) * var(--card-lift))) scale(var(--card-scale)) perspective(1250px) rotateX(var(--card-tilt));
-  transition: transform 420ms cubic-bezier(.2, .75, .25, 1), height 420ms cubic-bezier(.2, .75, .25, 1);
+  transition: transform 420ms cubic-bezier(.2, .75, .25, 1);
 }
 
 .project-stack li:nth-child(2) { --card-tone: #c6c6c6; }
@@ -116,7 +114,6 @@
   }
   .project-stack li {
     grid-area: auto;
-    height: var(--full-height);
     transform: none !important;
   }
 }
